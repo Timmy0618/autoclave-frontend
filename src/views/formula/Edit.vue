@@ -1,7 +1,14 @@
 <template>
-    <h1>Festo 排程編輯</h1>
+    <h1>Formula 排程編輯</h1>
+
     <el-row style="margin-bottom: 20px;">
-        <el-table row-class-name="primary-row" :data="festoSchedule" border style="width: 100%">
+        <el-input v-model="formulaName" placeholder="Please input" type="text" style="width:150px">
+            <template #prepend>Name :</template>
+        </el-input>
+    </el-row>
+
+    <el-row style="margin-bottom: 20px;">
+        <el-table :data="formulaDetail" border style="width: 100%">
             <el-table-column label="Sequence">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -25,7 +32,7 @@
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
                         <!-- <span style="margin-left: 10px">{{ scope.row.processTime }}</span> -->
-                        <el-input v-model="scope.row.processTime" placeholder="Please input" type="number">
+                        <el-input v-model="scope.row.process_time" placeholder="Please input" type="number">
                             <template #append>min</template>
                         </el-input>
                     </div>
@@ -38,7 +45,6 @@
         <el-button type="primary" @click="$router.go(-1)">Cancel</el-button>
     </el-row>
 </template>
-
 <script lang="ts" setup>
 import { ref, onMounted, inject, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router';
@@ -46,21 +52,25 @@ const route = useRoute()
 const router = useRouter()
 const axios: any = inject('axios')  // inject axios
 
-interface festoDetail {
-    id: number;
+interface formulaDetailI {
+    name: string;
     pressure: number;
-    processTime: number;
+    process_time: number;
+    sequence: number;
 }
 
-let festoSchedule = ref<Array<festoDetail>>([])
+let formulaDetail = ref<Array<formulaDetailI>>([])
+let formulaName = ref('')
 
-const getFestoSchedule = () => {
+
+const getFormulaDetail = () => {
     const id = route.params.id;
     axios
-        .get("/schedule/" + id)
+        .get("/formula/" + id)
         .then(function (response: { data: any }) {
             // handle success
-            festoSchedule.value = response.data.Data;
+            formulaDetail.value = response.data.Data;
+            formulaName.value = response.data.Data[0].name
         })
         .catch(function (error: {}) {
             // handle error
@@ -72,14 +82,18 @@ const getFestoSchedule = () => {
 }
 
 const handleComplete = () => {
-    console.log(festoSchedule.value);
+    const id = route.params.id;
     axios
-        .patch("/schedule", { schedule: festoSchedule.value })
+        .patch("/formula/" + id, {
+            name: formulaName.value,
+            detail: formulaDetail.value,
+        })
         .then(function (response: { data: any }) {
             // handle success
-            if (response.data.Msg == "Success")
-                router.back()
-            else alert(response.data.Msg);
+            router.back()
+            // if (response.data.Msg == "Success")
+            //     window.location = baseurl + "/html/festo/festo.html";
+            // else alert(response.data.Msg);
         })
         .catch(function (error: {}) {
             // handle error
@@ -88,13 +102,12 @@ const handleComplete = () => {
         .then(function () {
             // always executed
         });
-
 }
 
-watch(() => festoSchedule, (currentValue, oldValue) => {
-    for (let i = 0; i < festoSchedule.value.length; i++) {
-        if (Number(festoSchedule.value[i]["processTime"]) < 0) {
-            festoSchedule.value[i]["processTime"] = 0;
+watch(() => formulaDetail, (currentValue, oldValue) => {
+    for (let i = 0; i < formulaDetail.value.length; i++) {
+        if (Number(formulaDetail.value[i]["process_time"]) < 0) {
+            formulaDetail.value[i]["process_time"] = 0;
         }
     }
 },
@@ -102,6 +115,7 @@ watch(() => festoSchedule, (currentValue, oldValue) => {
 );
 
 onMounted(() => {
-    getFestoSchedule()
+    getFormulaDetail()
 })
+
 </script>
