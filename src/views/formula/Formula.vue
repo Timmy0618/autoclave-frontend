@@ -5,7 +5,7 @@
             Add
         </el-button>
     </div>
-    <el-table :data="formulaData" border style="width: 100%" @current-change="handleCurrentChange">
+    <el-table :data="formulaData" border style="width: 100%" @current-change="handleCurrentChange" table-layout="auto">
         <el-table-column label="Name">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
@@ -39,7 +39,7 @@
     </el-table>
 
     <h1>Formula 排程資訊</h1>
-    <el-table :data="formulaDetail" border style="width: 100%">
+    <el-table :data="formulaDetail" border style="width: 100%" table-layout="auto">
         <el-table-column label="Name">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
@@ -59,7 +59,7 @@
         <el-table-column label="Pressure">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <span style="margin-left: 10px">{{ scope.row.pressure }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.pressure }} kpa</span>
                 </div>
             </template>
         </el-table-column>
@@ -67,7 +67,7 @@
         <el-table-column label="Process Time">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <span style="margin-left: 10px">{{ scope.row.process_time }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.process_time }} min</span>
                 </div>
             </template>
         </el-table-column>

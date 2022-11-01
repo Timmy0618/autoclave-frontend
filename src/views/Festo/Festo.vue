@@ -1,7 +1,7 @@
 <template>
     <h1>Festo 名單</h1>
     <el-row style="margin-bottom: 20px;">
-        <el-table :data="festoData" border style="width: 100%"
+        <el-table :data="festoData" border style="width: 100%" table-layout="auto"
             @current-change="handleCurrentChange">
             <el-table-column label="Name">
                 <template #default="scope">
@@ -63,7 +63,7 @@
         </RouterLink>
     </div>
 
-    <el-table :data="festoSchedule" border style="width: 100%">
+    <el-table :data="festoSchedule" border style="width: 100%" table-layout="auto">
         <el-table-column label="Name">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
@@ -83,7 +83,7 @@
         <el-table-column label="Pressure">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <span style="margin-left: 10px">{{ scope.row.pressure }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.pressure }} kpa</span>
                 </div>
             </template>
         </el-table-column>
@@ -91,7 +91,7 @@
         <el-table-column label="Process Time">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <span style="margin-left: 10px">{{ scope.row.processTime }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.processTime }} min</span>
                 </div>
             </template>
         </el-table-column>

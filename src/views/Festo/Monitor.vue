@@ -15,10 +15,10 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="Dst Pressure" label-align="left" align="center">{{
                             monitorData.dstPressure
-                    }}
+                    }} kpa
                     </el-descriptions-item>
                     <el-descriptions-item label="Now Pressure" label-align="left" align="center">
-                        {{ monitorData.currentPressure }}</el-descriptions-item>
+                        {{ monitorData.currentPressure ?? 0 }} kpa</el-descriptions-item>
                     <el-descriptions-item label="Status" label-align="left" align="center">
                         <el-tag size="large" :type="handleTag(monitorData.status)">{{ statusMap[monitorData.status] }}
                         </el-tag>
