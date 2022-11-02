@@ -75,7 +75,7 @@
         <el-table-column label="Sequence">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <span style="margin-left: 10px">{{ scope.row.sequence }}</span>
+                    <span style="margin-left: 10px">{{ scope.row.sequence + 1 }}</span>
                 </div>
             </template>
         </el-table-column>
