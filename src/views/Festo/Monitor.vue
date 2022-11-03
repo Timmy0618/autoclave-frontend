@@ -1,16 +1,15 @@
 <template>
     <h1>Festo 監控</h1>
-    <el-row style="margin-bottom: 20px;">
+    <el-row style="margin-bottom: 20px">
         <span>最後更新時間：{{ lastUpdateTime }}</span>
     </el-row>
     <el-row>
-        <el-col v-for="monitorData, index in monitorList" :span="5" :offset="1">
-            <el-card style="margin-bottom: 20px;">
+        <el-col v-for="(monitorData, index) in monitorList" :span="5" :offset="1">
+            <el-card style="margin-bottom: 20px">
                 <el-descriptions :title="monitorData.name" :column="1" border size="large">
                     <el-descriptions-item label="Formula" label-align="left" align="center" label-class-name="my-label"
                         class-name="my-content" width="150px">{{ monitorData.formulaName }}</el-descriptions-item>
-                    <el-descriptions-item label="Sequence" label-align="left" align="center">{{ monitorData.sequence
-                            + 1
+                    <el-descriptions-item label="Sequence" label-align="left" align="center">{{ monitorData.sequence + 1
                     }}
                     </el-descriptions-item>
                     <el-descriptions-item label="Dst Pressure" label-align="left" align="center">{{
@@ -30,12 +29,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, inject, watch } from 'vue'
-import { onBeforeRouteLeave } from 'vue-router';
+import { ref, onMounted, inject, watch } from "vue";
+import { onBeforeRouteLeave } from "vue-router";
 
-const axios: any = inject('axios')  // inject axios
-const currentDate = ref(new Date())
-let checkPage = true
+const axios: any = inject("axios"); // inject axios
+const currentDate = ref(new Date());
+let checkPage = true;
 
 interface monitor {
     currentPressure: number;
@@ -47,36 +46,52 @@ interface monitor {
     status: number;
 }
 
-
-let monitorList = ref<Array<monitor>>([])
-let lastUpdateTime = ref('')
-const statusMap = { 0: 'Waiting', 1: 'Executing', 2: 'End' }
+let monitorList = ref<Array<monitor>>([]);
+let lastUpdateTime = ref("");
+const statusMap = { 0: "Waiting", 1: "Executing", 2: "End" };
 
 // For todays date;
 Date.prototype.today = function () {
-    return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
-}
+    return (
+        (this.getDate() < 10 ? "0" : "") +
+        this.getDate() +
+        "/" +
+        (this.getMonth() + 1 < 10 ? "0" : "") +
+        (this.getMonth() + 1) +
+        "/" +
+        this.getFullYear()
+    );
+};
 
 // For the time now
 Date.prototype.timeNow = function () {
-    return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
-}
+    return (
+        (this.getHours() < 10 ? "0" : "") +
+        this.getHours() +
+        ":" +
+        (this.getMinutes() < 10 ? "0" : "") +
+        this.getMinutes() +
+        ":" +
+        (this.getSeconds() < 10 ? "0" : "") +
+        this.getSeconds()
+    );
+};
 
 const handleTag = (status: number) => {
-    let type = ''
+    let type = "";
     switch (status) {
         case 0:
-            type = 'warning'
+            type = "warning";
             break;
         case 1:
-            type = 'primary'
+            type = "primary";
             break;
         case 2:
-            type = 'info'
+            type = "info";
             break;
     }
-    return type
-}
+    return type;
+};
 
 const getMonitorData = async () => {
     axios
@@ -87,7 +102,6 @@ const getMonitorData = async () => {
                 lastUpdateTime.value = new Date().timeNow();
                 monitorList.value = response.data.Data;
                 console.log(monitorList.value);
-
             } else {
                 alert(response.data.Msg);
             }
@@ -99,31 +113,28 @@ const getMonitorData = async () => {
         .then(function () {
             // always executed
         });
-}
+};
 
 const sleep = async (ms = 0) => {
     return new Promise((r) => setTimeout(r, ms));
-}
+};
 
 const getInterval = async () => {
     while (checkPage) {
         await getMonitorData();
         await sleep(10000);
     }
-}
+};
 
 onBeforeRouteLeave((to, from) => {
-    checkPage = false
-})
+    checkPage = false;
+});
 
 onMounted(() => {
-    getInterval()
-})
+    getInterval();
+});
 </script>
 
-
 <style scoped>
-.el-descriptions--large .el-descriptions__header .el-descriptions__title {
-    font-size: 25px;
-}
+
 </style>

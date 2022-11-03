@@ -1,5 +1,5 @@
 <template>
-    <h1>Formula 排程編輯</h1>
+    <h1>Formula 排程新增</h1>
 
     <el-row style="margin-bottom: 20px;" :gutter="20">
         <el-col :span="4">

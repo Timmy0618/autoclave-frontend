@@ -1,14 +1,14 @@
 <template>
     <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" background-color="#545c64"
-        text-color="#fff" active-text-color="#ffd04b">
-        <el-menu-item index="2">
-            <RouterLink to="/festo">Festo</RouterLink>
+        text-color="#fff" active-text-color="#ffd04b" router>
+        <el-menu-item index="/festo">
+            Festo
         </el-menu-item>
-        <el-menu-item index="3">
-            <RouterLink to="/festo/monitor">Festo Monitor</RouterLink>
+        <el-menu-item index="/festo/monitor">
+            Festo Monitor
         </el-menu-item>
-        <el-menu-item index="4">
-            <RouterLink to="/formula">Formula</RouterLink>
+        <el-menu-item index="/formula">
+            Formula
         </el-menu-item>
     </el-menu>
 </template>

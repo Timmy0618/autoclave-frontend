@@ -1,7 +1,7 @@
 <template>
     <h1>Festo 名單</h1>
     <el-row style="margin-bottom: 20px;">
-        <el-table :data="festoData" border style="width: 100%" table-layout="auto"
+        <el-table :data="festoData" border style="width: 100%" table-layout="auto" :header-cell-style="{ background: '#faecd8' }"
             @current-change="handleCurrentChange">
             <el-table-column label="Name">
                 <template #default="scope">
@@ -63,7 +63,7 @@
         </RouterLink>
     </div>
 
-    <el-table :data="festoSchedule" border style="width: 100%" table-layout="auto">
+    <el-table :data="festoSchedule" border style="width: 100%" table-layout="auto" :header-cell-style="{ background: '#faecd8' }">
         <el-table-column label="Name">
             <template #default="scope">
                 <div style="display: flex; align-items: center">

@@ -2,7 +2,7 @@
     <h1>Formula 排程編輯</h1>
 
     <el-row style="margin-bottom: 20px;">
-        <el-input v-model="formulaName" placeholder="Please input" type="text" style="width:150px">
+        <el-input v-model="formulaName" placeholder="Please input" type="text" style="width:200px">
             <template #prepend>Name :</template>
         </el-input>
     </el-row>
