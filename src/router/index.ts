@@ -1,14 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// import HomeView from '../views/HomeView.vue'
+import { useCookies } from "vue3-cookies";
+
+const { cookies } = useCookies()
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'home',
-    //   component: HomeView
-    // },
+    {
+      path: '/login',
+      name: 'login',
+      meta: { title: 'Login' },
+      component: () => import('../views/Login.vue')
+    },
     {
       path: '/festo',
       name: 'festo',
@@ -68,9 +71,24 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  window.document.title = to.meta.title;
-  
-  next()
+  const isLogin = cookies.get("Authorization")
+
+  if (isLogin) {
+    if (to.path == '/login') {
+      alert('已登入')
+      next('/festo')
+    } else {
+      window.document.title = to.meta.title;
+      next()
+    }
+  } else {
+    alert("Plz login")
+    if (to.path !== '/login' && to.path !== '/') {
+      next("/login")
+    } else {
+      next()
+    }
+  }
 })
 
 export default router
