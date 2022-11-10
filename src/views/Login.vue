@@ -6,7 +6,8 @@
                     <span class="ml-3 w-35 text-gray-600 inline-flex items-center">UserName: </span>
                 </el-col>
                 <el-col :span="4">
-                    <el-input v-model="userName" class="w-40" placeholder="UserName" @keyup.enter.native="handleLogin"/>
+                    <el-input v-model="userName" class="w-40" placeholder="UserName"
+                        @keyup.enter.native="handleLogin" />
                 </el-col>
             </el-row>
             <el-row style="margin-bottom: 20px;" justify="center">
@@ -14,7 +15,8 @@
                     <span class="ml-3 w-35 text-gray-600 inline-flex items-center">Password: </span>
                 </el-col>
                 <el-col :span="4">
-                    <el-input v-model="password" class="w-40" type="password" placeholder="Password" show-password @keyup.enter.native="handleLogin"/>
+                    <el-input v-model="password" class="w-40" type="password" placeholder="Password" show-password
+                        @keyup.enter.native="handleLogin" />
                 </el-col>
             </el-row>
             <el-row justify="center">
@@ -29,6 +31,7 @@
 import { useRouter } from 'vue-router';
 import { ref, inject } from 'vue'
 import { useCookies } from "vue3-cookies";
+import { ElMessage } from 'element-plus'
 
 const axios: any = inject('axios')  // inject axios
 const { cookies } = useCookies()
@@ -44,7 +47,10 @@ const router = useRouter()
 
 const handleLogin = () => {
     if (!userName.value || !password.value) {
-        alert("UserName or Password can't be empty")
+        ElMessage({
+            message: "UserName or Password can't be empty",
+            type: 'warning',
+        })
         return
     }
 

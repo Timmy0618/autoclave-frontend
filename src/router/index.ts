@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useCookies } from "vue3-cookies";
+import { ElMessage } from 'element-plus'
 
 const { cookies } = useCookies()
 
@@ -82,8 +83,11 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    alert("Plz login")
-    if (to.path !== '/login' && to.path !== '/') {
+    if (to.path !== '/login') {
+      ElMessage({
+        message: "Plz login",
+        type: 'warning',
+      })
       next("/login")
     } else {
       next()
