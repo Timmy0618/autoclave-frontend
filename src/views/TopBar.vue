@@ -10,6 +10,9 @@
         <el-menu-item index="/formula">
             Formula
         </el-menu-item>
+        <el-menu-item index="/festo/export">
+            Festo Export
+        </el-menu-item>
         <el-menu-item v-if="isLogin != null" index="" style="margin-left: auto;" @click="handleLogout">
             Logout
         </el-menu-item>
