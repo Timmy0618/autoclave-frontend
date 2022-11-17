@@ -186,14 +186,20 @@ const handleExport = async () => {
     let end = date.value[1]
     start = `${start.getFullYear()}-${start.getMonth() + 1}-${start.getDate()} 00:00:00`
     end = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} 23:59:59`
+    ElMessage({
+        message: 'Start Export.',
+        type: 'success',
+    })
 
     axios
         .post("/festo/export", { slaveId: slaveId, startTime: start, endTime: end, offset: 0 })
         .then(function (response: { data: any }) {
             // handle success
             if (response.data.Msg == "Success") {
-                console.log(response.data.Data)
-                historyList.value = response.data.Data
+                ElMessage({
+                    message: 'Export Done.',
+                    type: 'success',
+                })
                 return;
             } else alert(response.data.Msg);
         })
@@ -229,6 +235,7 @@ const checkInput = async () => {
 
     return flag
 }
+
 onMounted(() => {
     getFestoList()
 })
