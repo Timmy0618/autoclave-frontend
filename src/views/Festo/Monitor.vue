@@ -84,7 +84,7 @@ const handleTag = (status: number) => {
             type = "warning";
             break;
         case 1:
-            type = "primary";
+            type = "";
             break;
         case 2:
             type = "info";
