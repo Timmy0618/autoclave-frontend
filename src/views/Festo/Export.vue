@@ -36,32 +36,34 @@
     </el-row>
 
     <el-row v-if="historyList.length">
-        <Chart :size="{ width: 720, height: 420 }" :data="historyList" :margin="margin" :direction="direction"
-            :axis="axis">
+        <template v-for="history, index in historyList">
+            <template v-for="data, index in history">
+                <el-col v-if="data.length > 0">
+                    <span>
+                        {{ index }}
+                    </span>
+                    <Chart :size="{ width: 720, height: 420 }" :data="data" :margin="margin" :direction="direction"
+                        :axis="axis">
+                        <template #layers>
+                            <Grid strokeDasharray="2,2" />
+                            <Line :dataKeys="['time', 'avgPressure']" :lineStyle="{ stroke: 'red' }" />
+                            <!-- <LabelsLayer :dataKeys="['time', 'avgPressure']" /> -->
+                        </template>
+                    </Chart>
+                </el-col>
 
-            <template #layers>
-                <Grid strokeDasharray="2,2" />
-                <Line :dataKeys="['time', 'avgPressure']" :lineStyle="{ stroke: 'red' }" />
             </template>
-        </Chart>
+        </template>
     </el-row>
 </template>
   
-
-
-<script lang="ts">
-
-export default defineComponent({
-    name: 'LineChart',
-    components: { Chart, Grid, Line }
-})
-</script>
 
 <script lang="ts" setup>
 import { ArrowDown } from '@element-plus/icons-vue'
 import { ref, inject, onMounted, defineComponent } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { Chart, Grid, Line } from 'vue3-charts'
+// import LabelsLayer from './LabelsLayer.vue'
 import { ElMessage } from 'element-plus'
 
 const axios: any = inject('axios')  // inject axios
@@ -126,8 +128,6 @@ const axis = ref({
 })
 
 const handleDropdown = (index: number) => {
-    console.log(index);
-    console.log(festoData.value[index]["name"]);
     selectedSlaveName.value = festoData.value[index]["name"]
     slaveId = festoData.value[index]["id"]
 }
@@ -138,7 +138,6 @@ const getFestoList = () => {
         .then(function (response: { data: any }) {
             // handle success
             festoData.value = response.data.Data
-            console.log(festoData.value);
         })
         .catch(function (error: { data: any }) {
             // handle error
@@ -163,7 +162,6 @@ const handleSearch = async () => {
         .then(function (response: { data: any }) {
             // handle success
             if (response.data.Msg == "Success") {
-                console.log(response.data.Data)
                 historyList.value = response.data.Data
                 return;
             } else alert(response.data.Msg);
@@ -220,7 +218,6 @@ const alterBox = (msg: string) => {
 }
 
 const checkInput = async () => {
-    console.log(selectedSlaveName.value);
 
     let flag = true
     if (!date.value[0] || !date.value[1]) {
@@ -230,6 +227,13 @@ const checkInput = async () => {
 
     if (selectedSlaveName.value === "Festo Name") {
         alterBox('Please Select Festo')
+        flag = false
+    }
+
+    var difference = Math.abs(date.value[0].getTime() - date.value[1].getTime());
+    let diffDays = difference / (1000 * 3600 * 24)
+    if (diffDays > 7) {
+        alterBox('Date limit > 7')
         flag = false
     }
 
