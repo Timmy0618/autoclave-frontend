@@ -223,17 +223,17 @@ const checkInput = async () => {
     if (!date.value[0] || !date.value[1]) {
         alterBox('Please Select Date')
         flag = false
+    } else {
+        var difference = Math.abs(date.value[0].getTime() - date.value[1].getTime());
+        let diffDays = difference / (1000 * 3600 * 24)
+        if (diffDays > 7) {
+            alterBox('Date limit > 7')
+            flag = false
+        }
     }
 
     if (selectedSlaveName.value === "Festo Name") {
         alterBox('Please Select Festo')
-        flag = false
-    }
-
-    var difference = Math.abs(date.value[0].getTime() - date.value[1].getTime());
-    let diffDays = difference / (1000 * 3600 * 24)
-    if (diffDays > 7) {
-        alterBox('Date limit > 7')
         flag = false
     }
 
