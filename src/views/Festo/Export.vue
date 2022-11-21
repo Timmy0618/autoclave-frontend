@@ -190,16 +190,43 @@ const handleExport = async () => {
     })
 
     axios
-        .post("/festo/export", { slaveId: slaveId, startTime: start, endTime: end, offset: 0 })
-        .then(function (response: { data: any }) {
-            // handle success
-            if (response.data.Msg == "Success") {
+        .post("/festo/export", { slaveId: slaveId, startTime: start, endTime: end, offset: 0 }, { responseType: 'blob' })
+        .then(function (res: any, fileName: Text) {
+            if (res.headers["content-type"].includes("application/json")) {
+                //1.先宣告取得blob型態
+                const blb = new Blob([res.data], { type: "csv" });
+                let reader = new FileReader();
+                //3.完全讀完才會
+                reader.onload = (e: any) => {
+                    if (e.target.readyState === 2) {
+                        let res = {};
+                        res = JSON.parse(e.target.result);
+                        if (res.Msg.indexOf("app.") !== -1) {
+                            alert('done');
+                        }
+                        else {
+                            alert('false');
+                        }
+                    }
+                };
+                //2.再將blb型態讀出來
+                reader.readAsText(blb);
+            }
+            else {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.style.display = 'none'
+                const fileName = `festo${slaveId}_${start}_${end}.csv`
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
                 ElMessage({
                     message: 'Export Done.',
                     type: 'success',
                 })
-                return;
-            } else alert(response.data.Msg);
+            }
         })
         .catch(function (error: {}) {
             // handle error
