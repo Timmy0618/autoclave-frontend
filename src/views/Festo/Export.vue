@@ -31,7 +31,7 @@
         </el-col>
 
         <el-col :span="1">
-            <el-button type="primary" plan @click="handleExport">Export</el-button>
+            <el-button type="primary" plan @click="handleExport" :disabled='exportDisabled'>Export</el-button>
         </el-col>
     </el-row>
 
@@ -75,6 +75,7 @@ interface festo {
     slaveId: number
 }
 
+const exportDisabled = ref(false)
 const date = ref('')
 const selectedSlaveName = ref("Festo Name")
 let festoData = ref<Array<festo>>([])
@@ -189,28 +190,15 @@ const handleExport = async () => {
         type: 'success',
     })
 
+    exportDisabled.value = true
     axios
         .post("/festo/export", { slaveId: slaveId, startTime: start, endTime: end, offset: 0 }, { responseType: 'blob' })
         .then(function (res: any, fileName: Text) {
             if (res.headers["content-type"].includes("application/json")) {
-                //1.先宣告取得blob型態
-                const blb = new Blob([res.data], { type: "csv" });
-                let reader = new FileReader();
-                //3.完全讀完才會
-                reader.onload = (e: any) => {
-                    if (e.target.readyState === 2) {
-                        let res = {};
-                        res = JSON.parse(e.target.result);
-                        if (res.Msg.indexOf("app.") !== -1) {
-                            alert('done');
-                        }
-                        else {
-                            alert('false');
-                        }
-                    }
-                };
-                //2.再將blb型態讀出來
-                reader.readAsText(blb);
+                ElMessage({
+                    message: "Export Fail.",
+                    type: 'warning',
+                })
             }
             else {
                 const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -234,6 +222,7 @@ const handleExport = async () => {
         })
         .then(function () {
             // always executed
+            exportDisabled.value = false
         });
 }
 
