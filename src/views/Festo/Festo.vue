@@ -10,7 +10,7 @@
                     </div>
                 </template>
             </el-table-column>
-    
+
             <el-table-column label="ID">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -18,7 +18,7 @@
                     </div>
                 </template>
             </el-table-column>
-    
+
             <el-table-column label="Formula">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
@@ -39,12 +39,12 @@
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
-    
+
                         <!-- <span style="margin-left: 10px">{{ scope.row.formulaName }}</span> -->
                     </div>
                 </template>
             </el-table-column>
-    
+
             <el-table-column label="Action">
                 <template #default="scope">
                     <el-button type="success" @click="handleStart(scope.row.id)">Start</el-button>
@@ -115,11 +115,17 @@
         <el-table-column label="Status">
             <template #default="scope">
                 <div style="display: flex; align-items: center">
-                    <el-tag
-                    :type="handleTag(scope.row.status)"
-                    >
+                    <el-tag :type="handleTag(scope.row.status)">
                         {{ statusMap[scope.row.status] }}
                     </el-tag>
+                </div>
+            </template>
+        </el-table-column>
+
+        <el-table-column label="Check">
+            <template #default="scope">
+                <div style="display: flex; align-items: center" >
+                    <el-checkbox v-model="scope.row.checkPressure" label="" size="large" border @change="handleCheckbox(scope.row.id)"/>
                 </div>
             </template>
         </el-table-column>
@@ -147,6 +153,7 @@ interface festoDetail {
     processTime: number;
     sequence: number;
     status: number;
+    checkPressure: boolean;
     time_end: Date;
     time_start: Date;
 }
@@ -229,12 +236,15 @@ const handleDropdown = (obj: { formulaId: number, festoId: number }) => {
 }
 
 const getFestoSchedule = (id: number) => {
-    selectedId.value = { name:'festoEdit', params: { id: id}}
+    selectedId.value = { name: 'festoEdit', params: { id: id } }
     axios
         .get("/festo/" + id)
         .then(function (response: { data: any }) {
             // handle success
-            festoSchedule.value = response.data.Data;
+            if(response.data.Msg == 'Success')
+                festoSchedule.value = response.data.Data;
+            else
+                alert(response.data.Msg)
         })
         .catch(function (error: {}) {
             // handle error
@@ -293,6 +303,26 @@ const handleTag = (status: number) => {
     }
     return type
 }
+
+const handleCheckbox = (id: number) =>{
+    axios
+        .patch("/schedule/checkPressure/" + id)
+        .then(function (response: { data: any }) {
+            // handle success
+            if(response.data.Msg == "Success")
+                return
+            else
+                alert(response.data.Msg)
+        })
+        .catch(function (error: {}) {
+            // handle error
+            console.log(error);
+        })
+        .then(function () {
+            // always executed
+        });
+}
+
 onMounted(() => {
     getFestoList()
     getFormula()
