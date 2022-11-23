@@ -18,6 +18,8 @@
                     </el-descriptions-item>
                     <el-descriptions-item label="Now Pressure" label-align="left" align="center">
                         {{ monitorData.currentPressure ?? 0 }} kpa</el-descriptions-item>
+                    <el-descriptions-item label="Reset Times" label-align="left" align="center">
+                        {{ monitorData.resetTimes }} </el-descriptions-item>
                     <el-descriptions-item label="Status" label-align="left" align="center">
                         <el-tag size="large" :type="handleTag(monitorData.status)">{{ statusMap[monitorData.status] }}
                         </el-tag>
@@ -43,6 +45,7 @@ interface monitor {
     id: number;
     name: string;
     sequence: number;
+    resetTimes: number;
     status: number;
 }
 

@@ -210,19 +210,18 @@ const handleDelete = (id: number) => {
 }
 
 const handleCurrentChange = (festo: festo) => {
-    getFestoSchedule(festo.id)
+    if(festo)
+        getFestoSchedule(festo.id)
 }
 
-const handleDropdown = (obj: { formulaId: number, festoId: number }) => {
-    console.log(obj);
-
-    axios
+const handleDropdown = async (obj: { formulaId: number, festoId: number }) => {
+    await axios
         .patch("/festo/" + obj.festoId, { formulaId: obj.formulaId })
         .then(function (response: { data: any }) {
             // handle success
             if (response.data.Msg == "Success") {
-                getFestoSchedule(obj.festoId);
                 getFestoList();
+                getFestoSchedule(obj.festoId);
                 return;
             } else alert(response.data.Msg);
         })
