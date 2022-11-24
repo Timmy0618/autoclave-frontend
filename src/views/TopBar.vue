@@ -16,6 +16,9 @@
         <el-menu-item v-if="isLogin != null" index="" style="margin-left: auto;" @click="handleLogout">
             Logout
         </el-menu-item>
+        <el-menu-item v-else index="" style="margin-left: auto;" @click="handleLogin">
+            Login
+        </el-menu-item>
     </el-menu>
 </template>
   
@@ -32,6 +35,10 @@ const isLogin = ref(cookies.get("Authorization"))
 
 const handleLogout = () => {
     logout()
+    router.push({ name: 'login' })
+}
+
+const handleLogin = () => {
     router.push({ name: 'login' })
 }
 
