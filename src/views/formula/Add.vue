@@ -126,22 +126,31 @@ watch(() => formulaData, (currentValue, oldValue) => {
 );
 
 watch(formulaCount, (curVal, oldVal) => {
-    if (curVal > 10) formulaCount.value = 10;
-    if (curVal < 0) formulaCount.value = 0;
 
-    if (curVal > oldVal) {
-        for (let i = 0; i < curVal - oldVal; i++) {
-            formulaData.value.push({
+    if (curVal > 10) {
+        formulaCount.value = 10;
+        return
+    }
+    if (curVal < 0) {
+        formulaCount.value = 0;
+        return
+    }
+
+
+    let temp = []
+    for (let i = 0; i < curVal; i++) {
+        if (formulaData.value[i]) {
+            temp.push(formulaData.value[i])
+        }
+        else {
+            temp.push({
                 pressure: 0,
                 process_time: 0
             })
         }
     }
-    else {
-        for (let i = 0; i < oldVal - curVal; i++) {
-            formulaData.value.pop()
-        }
-    }
+
+    formulaData.value = temp
 }
 )
 
