@@ -11,10 +11,10 @@
                 </template>
             </el-table-column>
 
-            <el-table-column label="ID">
+            <el-table-column label="Batch Number">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <span style="margin-left: 10px">{{ scope.row.slaveId }}</span>
+                        <span style="margin-left: 10px">{{ scope.row.batchNumber }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -22,25 +22,7 @@
             <el-table-column label="Formula">
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
-                        <el-dropdown @command="handleDropdown">
-                            <span class="el-dropdown-link">
-                                {{ scope.row.formulaName }}
-                                <el-icon class="el-icon--right">
-                                    <arrow-down />
-                                </el-icon>
-                            </span>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <template v-for="data,index in formulaData">
-                                        <el-dropdown-item :command={formulaId:data.id,festoId:scope.row.id}>
-                                            {{data.name}}
-                                        </el-dropdown-item>
-                                    </template>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-
-                        <!-- <span style="margin-left: 10px">{{ scope.row.formulaName }}</span> -->
+                            <span style="margin-left: 10px">{{ scope.row.formulaName }}</span>
                     </div>
                 </template>
             </el-table-column>
@@ -49,6 +31,7 @@
                 <template #default="scope">
                     <el-button type="success" @click="handleStart(scope.row.id)">Start</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.id)">Stop</el-button>
+                    <el-button type="primary" @click="handleEdit(scope.row.id)">Edit</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -135,12 +118,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, inject } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
-import { ArrowDown } from '@element-plus/icons-vue'
 const axios: any = inject('axios')  // inject axios
 const router = useRouter()
 
 interface festo {
     formulaName: string
+    batchNumber: string
     id: number
     name: string
     slaveId: number
@@ -209,35 +192,18 @@ const handleDelete = (id: number) => {
         });
 }
 
-const handleCurrentChange = (festo: festo) => {
-    if(festo)
-        getFestoSchedule(festo.id)
+const handleEdit = (id: number) => {
+    router.push({ name: 'festoEdit' , params: { id }})
 }
 
-const handleDropdown = async (obj: { formulaId: number, festoId: number }) => {
-    await axios
-        .patch("/festo/" + obj.festoId, { formulaId: obj.formulaId })
-        .then(function (response: { data: any }) {
-            // handle success
-            if (response.data.Msg == "Success") {
-                getFestoList();
-                getFestoSchedule(obj.festoId);
-                return;
-            } else alert(response.data.Msg);
-        })
-        .catch(function (error: {}) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
+const handleCurrentChange = (festo: festo) => {
+    getFestoSchedule(festo.id)
 }
 
 const getFestoSchedule = (id: number) => {
-    selectedId.value = { name: 'festoEdit', params: { id: id } }
+    selectedId.value = { name: 'festoEditSchedule', params: { id: id } }
     axios
-        .get("/festo/" + id)
+        .get("/festo/schedule/" + id)
         .then(function (response: { data: any }) {
             // handle success
             if(response.data.Msg == 'Success')

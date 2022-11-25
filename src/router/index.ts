@@ -41,6 +41,15 @@ const router = createRouter({
       component: () => import('../views/Festo/Edit.vue')
     },
     {
+      path: '/festo/edit/schedule/:id',
+      name: 'festoEditSchedule',
+      meta: { title: 'Festo Schedule 編輯' },
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Festo/EditSchedule.vue')
+    },
+    {
       path: '/festo/monitor',
       name: 'festoMonitor',
       meta: { title: 'Festo 監控' },

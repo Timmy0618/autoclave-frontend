@@ -1,107 +1,164 @@
 <template>
-    <h1>Festo 排程編輯</h1>
-    <el-row style="margin-bottom: 20px;">
-        <el-table row-class-name="primary-row" :data="festoSchedule" border style="width: 100%">
-            <el-table-column label="Sequence">
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <span style="margin-left: 10px">{{ scope.$index + 1 }}</span>
-                    </div>
-                </template>
-            </el-table-column>
+  <h1>Festo 編輯</h1>
 
-            <el-table-column label="Pressure">
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <!-- <span style="margin-left: 10px">{{ scope.row.pressure }}</span> -->
-                        <el-input v-model="scope.row.pressure" placeholder="Please input" type="number">
-                            <template #append>kpa</template>
-                        </el-input>
-                    </div>
-                </template>
-            </el-table-column>
+  <el-row style="margin-bottom: 20px">
+    <el-descriptions title="" :column="1" border size="large">
+      <el-descriptions-item
+        label="Festo Name"
+        label-align="left"
+        align="center"
+        label-class-name="my-label"
+        class-name="my-content"
+        width="150px"
+      >
+        <template v-if="festoData.length">
+          {{ festoData[0].name }}
+        </template>
+      </el-descriptions-item>
 
-            <el-table-column label="Process Time">
-                <template #default="scope">
-                    <div style="display: flex; align-items: center">
-                        <!-- <span style="margin-left: 10px">{{ scope.row.processTime }}</span> -->
-                        <el-input v-model="scope.row.processTime" placeholder="Please input" type="number">
-                            <template #append>min</template>
-                        </el-input>
-                    </div>
-                </template>
-            </el-table-column>
-        </el-table>
-    </el-row>
-    <el-row>
-        <el-button type="success" @click="handleComplete">Done</el-button>
-        <el-button type="primary" @click="$router.go(-1)">Cancel</el-button>
-    </el-row>
+      <el-descriptions-item
+        label="Formula"
+        label-align="left"
+        align="center"
+        label-class-name="my-label"
+        class-name="my-content"
+        width="150px"
+      >
+        <el-dropdown @command="handleDropdown">
+          <span class="el-dropdown-link">
+            <template v-if="festoData.length">
+              {{ festoData[0].formulaName }}
+            </template>
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <template v-for="(data, index) in formulaData">
+                <el-dropdown-item
+                  :command="{ formulaId: data.id, formulaName: data.name }"
+                >
+                  {{ data.name }}
+                </el-dropdown-item>
+              </template>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </el-descriptions-item>
+
+      <el-descriptions-item
+        label="Batch Number"
+        label-align="left"
+        align="center"
+        label-class-name="my-label"
+        class-name="my-content"
+        width="150px"
+      >
+        <el-input
+          v-model="batchNumber"
+          class="w-50 m-2"
+          placeholder="Input Batch Number"
+        />
+      </el-descriptions-item>
+    </el-descriptions>
+  </el-row>
+  <el-row>
+    <el-button type="success" @click="handleComplete">Done</el-button>
+    <el-button type="primary" @click="$router.go(-1)">Cancel</el-button>
+  </el-row>
 </template>
-
 <script lang="ts" setup>
-import { ref, onMounted, inject, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router';
-const route = useRoute()
-const router = useRouter()
-const axios: any = inject('axios')  // inject axios
+import { ref, onMounted, inject, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ArrowDown } from "@element-plus/icons-vue";
+const route = useRoute();
+const router = useRouter();
+const axios: any = inject("axios"); // inject axios
+const id = route.params.id;
 
-interface festoDetail {
-    id: number;
-    pressure: number;
-    processTime: number;
+interface festo {
+  id: number;
+  formulaName: string;
+  formulaId: number;
+  batchNumber: string;
+  name: string;
+  slaveId: number;
+}
+interface formula {
+  create_time: Date;
+  id: number;
+  name: string;
+  update_time: Date;
 }
 
-let festoSchedule = ref<Array<festoDetail>>([])
+let festoData = ref<Array<festo>>([]);
+let formulaData = ref<Array<formula>>([]);
+let batchNumber = ref("");
+let formulaId = 0;
 
-const getFestoSchedule = () => {
-    const id = route.params.id;
-    axios
-        .get("/schedule/" + id)
-        .then(function (response: { data: any }) {
-            // handle success
-            festoSchedule.value = response.data.Data;
-        })
-        .catch(function (error: {}) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
-}
+const getFesto = (id: number) => {
+  axios
+    .get("/festo/" + id)
+    .then(function (response: { data: any }) {
+      // handle success
+      festoData.value = response.data.Data;
+      formulaId = festoData.value[0].formulaId;
+      batchNumber.value = festoData.value[0].batchNumber;
+    })
+    .catch(function (error: { data: any }) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+};
+
+const getFormula = () => {
+  axios
+    .get("/formula")
+    .then(function (response: { data: any }) {
+      // handle success
+      formulaData.value = response.data.Data;
+    })
+    .catch(function (error: {}) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+};
 
 const handleComplete = () => {
-    console.log(festoSchedule.value);
-    axios
-        .patch("/schedule", { schedule: festoSchedule.value })
-        .then(function (response: { data: any }) {
-            // handle success
-            if (response.data.Msg == "Success")
-                router.back()
-            else alert(response.data.Msg);
-        })
-        .catch(function (error: {}) {
-            // handle error
-            console.log(error);
-        })
-        .then(function () {
-            // always executed
-        });
+  console.log(formulaId, batchNumber.value);
+  axios
+    .patch("/festo/" + id, { formulaId: formulaId, batchNumber: batchNumber.value })
+    .then(function (response: { data: any }) {
+      // handle success
+      if (response.data.Msg == "Success") router.back();
+      else alert(response.data.Msg);
+    })
+    .catch(function (error: {}) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+};
 
-}
-
-watch(() => festoSchedule, (currentValue, oldValue) => {
-    for (let i = 0; i < festoSchedule.value.length; i++) {
-        if (Number(festoSchedule.value[i]["processTime"]) < 0) {
-            festoSchedule.value[i]["processTime"] = 0;
-        }
-    }
-},
-    { deep: true }
-);
+const handleDropdown = async (obj: {
+  formulaId: number;
+  formulaName: string;
+}) => {
+  formulaId = obj.formulaId;
+  festoData.value[0].formulaName = obj.formulaName;
+};
 
 onMounted(() => {
-    getFestoSchedule()
-})
+  getFesto(id);
+  getFormula();
+});
 </script>
