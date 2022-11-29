@@ -25,6 +25,26 @@
       </div>
     </el-col>
 
+    <el-col :span="4">
+      <!-- <el-dropdown split-button type="primary" @command="handleType">
+        Default
+      </el-dropdown> -->
+      <el-dropdown @command="handleType">
+        <span class="el-dropdown-link">
+          {{ type }}
+          <el-icon class="el-icon--right">
+            <arrow-down />
+          </el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="hour"> hour </el-dropdown-item>
+            <el-dropdown-item command="min"> min </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </el-col>
+
     <el-col :span="1">
       <el-button :icon="Search" circle @click="handleSearch"></el-button>
     </el-col>
@@ -48,7 +68,7 @@
             {{ index }}
           </span>
           <Chart
-            :size="{ width: 720, height: 420 }"
+            :size="{ width: 1080, height: 420 }"
             :data="data"
             :margin="margin"
             :direction="direction"
@@ -62,6 +82,19 @@
               />
               <!-- <LabelsLayer :dataKeys="['time', 'avgPressure']" /> -->
             </template>
+
+            <template #widgets>
+              <Tooltip
+                borderColor="#48CAE4"
+                :config="{
+                  name: { hide: true },
+                  avgPressure: { color: '#0077b6' },
+                  formulaName: { color: 'red' },
+                  time: { color: 'green' },
+                  inc: { hide: true },
+                }"
+              />
+            </template>
           </Chart>
         </el-col>
       </template>
@@ -70,12 +103,12 @@
 </template>
 
 <script lang="ts" setup>
-import { ArrowDown } from "@element-plus/icons-vue";
 import { ref, inject, onMounted, defineComponent } from "vue";
 import { Search } from "@element-plus/icons-vue";
-import { Chart, Grid, Line } from "vue3-charts";
+import { Chart, Grid, Line, Tooltip } from "vue3-charts";
 // import LabelsLayer from './LabelsLayer.vue'
 import { ElMessage } from "element-plus";
+import { ArrowDown } from "@element-plus/icons-vue";
 
 const axios: any = inject("axios"); // inject axios
 
@@ -89,6 +122,7 @@ interface festo {
 let batchNumber = ref("");
 const exportDisabled = ref(false);
 const date = ref("");
+const type = ref("hour");
 const selectedSlaveName = ref("Batch Number");
 let festoData = ref<Array<festo>>([]);
 let slaveId: Number;
@@ -155,7 +189,7 @@ const handleSearch = async () => {
       batchNumber: batchNumber.value,
       startTime: start,
       endTime: end,
-      offset: 0,
+      type: type.value,
     })
     .then(function (response: { data: any }) {
       // handle success
@@ -191,7 +225,12 @@ const handleExport = async () => {
   axios
     .post(
       "/festo/export",
-      { batchNumber: batchNumber.value, startTime: start, endTime: end, offset: 0 },
+      {
+        batchNumber: batchNumber.value,
+        startTime: start,
+        endTime: end,
+        offset: 0,
+      },
       { responseType: "blob" }
     )
     .then(function (res: any, fileName: Text) {
@@ -226,6 +265,10 @@ const handleExport = async () => {
     });
 };
 
+const handleType = (selectType: string) => {
+  type.value = selectType;
+};
+
 const alterBox = (msg: string) => {
   ElMessage({
     type: "error",
@@ -257,8 +300,7 @@ const checkInput = async () => {
   return flag;
 };
 
-onMounted(() => {
-});
+onMounted(() => {});
 </script>
 
 <style scoped>
@@ -292,5 +334,13 @@ onMounted(() => {
   color: var(--el-color-primary);
   display: flex;
   align-items: center;
+}
+
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409eff;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
 }
 </style>
