@@ -9,12 +9,12 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'festo',
-      meta: { title: 'Festo' },
+      name: 'login',
+      meta: { title: 'Login' },
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import('../views/Festo/Festo.vue')
+      component: () => import('../views/Login.vue')
     },
     {
       path: '/login',
