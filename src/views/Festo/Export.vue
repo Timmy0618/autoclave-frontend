@@ -1,19 +1,11 @@
 <template>
   <el-row style="margin-bottom: 20px" :gutter="20" justify="start">
-    <el-col :span="4">
-      <el-input
-        v-model="batchNumber"
-        class="w-10 m-2"
-        placeholder="Input Batch Number"
-        size="large"
-      />
-    </el-col>
-
     <el-col :span="7">
       <div class="block">
         <span class="demonstration">Date：　</span>
         <el-date-picker
           v-model="date"
+          @change="selectDate"
           type="daterange"
           unlink-panels
           range-separator="To"
@@ -25,7 +17,30 @@
       </div>
     </el-col>
 
-    <el-col :span="4">
+    <el-col :span="1">
+      <!-- <el-dropdown split-button type="primary" @command="handleType">
+        Default
+      </el-dropdown> -->
+      <el-dropdown @command="handleBatch">
+        <span class="el-dropdown-link">
+          {{ batchNumber }}
+          <el-icon class="el-icon--right">
+            <arrow-down />
+          </el-icon>
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <template v-for="batch in batchList">
+              <el-dropdown-item :command="batch">
+                {{ batch }}
+              </el-dropdown-item>
+            </template>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </el-col>
+
+    <el-col :span="1">
       <!-- <el-dropdown split-button type="primary" @command="handleType">
         Default
       </el-dropdown> -->
@@ -148,6 +163,7 @@ const shortcuts = [
   },
 ];
 
+const batchList = ref([]);
 const historyList = ref([]);
 const direction = ref("horizontal");
 const margin = ref({
@@ -195,6 +211,7 @@ const handleSearch = async () => {
       // handle success
       if (response.data.Msg == "Success") {
         historyList.value = response.data.Data;
+
         return;
       } else alert(response.data.Msg);
     })
@@ -265,6 +282,44 @@ const handleExport = async () => {
     });
 };
 
+const selectDate = async () => {
+  if (!(await checkDate())) return;
+
+  let start = date.value[0];
+  let end = date.value[1];
+  start = `${start.getFullYear()}-${
+    start.getMonth() + 1
+  }-${start.getDate()} 00:00:00`;
+  end = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} 23:59:59`;
+  axios
+    .get(`/festo/history/batch?startTime=${start}&endTime=${end}`)
+    .then(function (response: { data: any }) {
+      // handle success
+      if (response.data.Msg == "Success") {
+        if (response.data.Data.length == 0)
+          ElMessage({
+            message: "No Batch Number",
+            type: "warning",
+          });
+        batchList.value = response.data.Data;
+        batchNumber.value = "";
+
+        return;
+      } else alert(response.data.Msg);
+    })
+    .catch(function (error: {}) {
+      // handle error
+      console.log(error);
+    })
+    .then(function () {
+      // always executed
+    });
+};
+
+const handleBatch = (batch: string) => {
+  batchNumber.value = batch;
+};
+
 const handleType = (selectType: string) => {
   type.value = selectType;
 };
@@ -278,26 +333,37 @@ const alterBox = (msg: string) => {
 
 const checkInput = async () => {
   let flag = true;
+  flag = checkDate();
+  flag = checkBatchNumber();
+
+  return flag;
+};
+
+const checkDate = async () => {
   if (!date.value[0] || !date.value[1]) {
     alterBox("Please Select Date");
-    flag = false;
+    return false;
   } else {
     var difference = Math.abs(
       date.value[0].getTime() - date.value[1].getTime()
     );
     let diffDays = difference / (1000 * 3600 * 24);
     if (diffDays > 7) {
+      date.value = []
       alterBox("Date limit > 7");
-      flag = false;
+      return false;
     }
   }
 
-  if (batchNumber.value === "Batch Number") {
-    alterBox("Please Input Batch Number");
-    flag = false;
-  }
+  return true;
+};
 
-  return flag;
+const checkBatchNumber = async () => {
+  if (batchNumber.value === "") {
+    alterBox("Please Select Batch Number");
+    return false;
+  }
+  return true;
 };
 
 onMounted(() => {});
@@ -340,6 +406,7 @@ onMounted(() => {});
   cursor: pointer;
   color: #409eff;
 }
+
 .el-icon-arrow-down {
   font-size: 12px;
 }
