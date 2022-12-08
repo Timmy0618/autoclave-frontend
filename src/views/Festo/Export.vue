@@ -124,6 +124,7 @@ import { Chart, Grid, Line, Tooltip } from "vue3-charts";
 // import LabelsLayer from './LabelsLayer.vue'
 import { ElMessage } from "element-plus";
 import { ArrowDown } from "@element-plus/icons-vue";
+import moment from "moment";
 
 const axios: any = inject("axios"); // inject axios
 
@@ -229,10 +230,8 @@ const handleExport = async () => {
 
   let start = date.value[0];
   let end = date.value[1];
-  start = `${start.getFullYear()}-${
-    start.getMonth() + 1
-  }-${start.getDate()} 00:00:00`;
-  end = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} 23:59:59`;
+  start = moment(start).format("YYYY-MM-DD 00:00:00");
+  end = moment(end).format("YYYY-MM-DD 23:59:59");
   ElMessage({
     message: "Start Export.",
     type: "success",
@@ -287,10 +286,9 @@ const selectDate = async () => {
 
   let start = date.value[0];
   let end = date.value[1];
-  start = `${start.getFullYear()}-${
-    start.getMonth() + 1
-  }-${start.getDate()} 00:00:00`;
-  end = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} 23:59:59`;
+  start = moment(start).format("YYYY-MM-DD 00:00:00");
+  end = moment(end).format("YYYY-MM-DD 23:59:59");
+
   axios
     .get(`/festo/history/batch?startTime=${start}&endTime=${end}`)
     .then(function (response: { data: any }) {
@@ -349,7 +347,7 @@ const checkDate = async () => {
     );
     let diffDays = difference / (1000 * 3600 * 24);
     if (diffDays > 7) {
-      date.value = []
+      date.value = [];
       alterBox("Date limit > 7");
       return false;
     }

@@ -35,7 +35,6 @@ import { ref, onMounted, inject, watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 
 const axios: any = inject("axios"); // inject axios
-const currentDate = ref(new Date());
 let checkPage = true;
 
 interface monitor {
