@@ -61,6 +61,21 @@
           placeholder="Input Batch Number"
         />
       </el-descriptions-item>
+      <el-descriptions-item
+        label="Warning Time"
+        label-align="left"
+        align="center"
+        label-class-name="my-label"
+        class-name="my-content"
+        width="150px"
+      >
+        <el-input
+          v-model="warningTime"
+          class="w-50 m-2"
+          placeholder="Input Time Minute"
+          type="number"
+        />
+      </el-descriptions-item>
     </el-descriptions>
   </el-row>
   <el-row>
@@ -71,7 +86,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, inject, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { ArrowDown } from "@element-plus/icons-vue";
+import { ArrowDown, Warning } from "@element-plus/icons-vue";
 const route = useRoute();
 const router = useRouter();
 const axios: any = inject("axios"); // inject axios
@@ -84,6 +99,7 @@ interface festo {
   batchNumber: string;
   name: string;
   slaveId: number;
+  warningTime: number;
 }
 interface formula {
   create_time: Date;
@@ -95,6 +111,7 @@ interface formula {
 let festoData = ref<Array<festo>>([]);
 let formulaData = ref<Array<formula>>([]);
 let batchNumber = ref("");
+let warningTime = ref(0);
 let formulaId = 0;
 
 const getFesto = (id: number) => {
@@ -105,6 +122,7 @@ const getFesto = (id: number) => {
       festoData.value = response.data.Data;
       formulaId = festoData.value[0].formulaId;
       batchNumber.value = festoData.value[0].batchNumber;
+      warningTime.value = festoData.value[0].warningTime;
     })
     .catch(function (error: { data: any }) {
       // handle error
@@ -134,7 +152,11 @@ const getFormula = () => {
 const handleComplete = () => {
   console.log(formulaId, batchNumber.value);
   axios
-    .patch("/festo/" + id, { formulaId: formulaId, batchNumber: batchNumber.value })
+    .patch("/festo/" + id, {
+      formulaId: formulaId,
+      batchNumber: batchNumber.value,
+      warningTime: warningTime.value,
+    })
     .then(function (response: { data: any }) {
       // handle success
       if (response.data.Msg == "Success") router.back();
@@ -156,6 +178,16 @@ const handleDropdown = async (obj: {
   formulaId = obj.formulaId;
   festoData.value[0].formulaName = obj.formulaName;
 };
+
+watch(
+  () => warningTime,
+  (currentValue, oldValue) => {
+    if (warningTime.value < 0) {
+      warningTime.value = 0;
+    }
+  },
+  { deep: true }
+);
 
 onMounted(() => {
   getFesto(id);
