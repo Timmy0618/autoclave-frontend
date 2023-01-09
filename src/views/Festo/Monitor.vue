@@ -1,8 +1,4 @@
 <template>
-  <audio hidden="true" ref="audio" controls>
-    <source src="../../assets/beep-warning.mp3" type="audio/mpeg" />
-  </audio>
-
   <h1>Festo 監控</h1>
   <el-row style="margin-bottom: 20px">
     <span>最後更新時間：{{ lastUpdateTime }}</span>
@@ -72,7 +68,6 @@
 import { ref, onMounted, inject, watch } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 
-const audio = ref<HTMLAudioElement>();
 const axios: any = inject("axios"); // inject axios
 let checkPage = true;
 
@@ -176,9 +171,12 @@ watch(
   () => monitorList, // 檢查warning time 有無需要警報
   (currentValue, oldValue) => {
     monitorList.value.forEach((element) => {
-      if (element.checkPressure && element.status != 2 && element.warningTime >= element.warningTimeLimit) {
+      if (
+        element.checkPressure &&
+        element.status != 2 &&
+        element.warningTime >= element.warningTimeLimit
+      ) {
         warningTag.value[element.id] = "danger";
-        audio.value?.play();
       }
     });
   },
