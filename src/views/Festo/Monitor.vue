@@ -137,14 +137,14 @@ const getMonitorData = async () => {
     .get("/festo/monitor")
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") {
+      if (response.data.msg == "Success") {
         lastUpdateTime.value = new Date().timeNow();
-        monitorList.value = response.data.Data;
+        monitorList.value = response.data.data;
         monitorList.value.forEach((element) => {
           warningTag.value[element.id] = "success";
         });
       } else {
-        alert(response.data.Msg);
+        alert(response.data.msg);
       }
     })
     .catch(function (error: {}) {

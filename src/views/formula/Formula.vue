@@ -160,7 +160,7 @@ const getFormulaList = () => {
         .get("/formula")
         .then(function (response: { data: any }) {
             // handle success
-            formulaData.value = response.data.Data
+            formulaData.value = response.data.data
         })
         .catch(function (error: { data: any }) {
             // handle error
@@ -176,7 +176,7 @@ const getFormulaDetail = (id: number) => {
         .get("/formula/" + id)
         .then(function (response: { data: any }) {
             // handle success
-            formulaDetail.value = response.data.Data
+            formulaDetail.value = response.data.data
         })
         .catch(function (error: { data: any }) {
             // handle error

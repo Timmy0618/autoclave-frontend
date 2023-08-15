@@ -48,7 +48,7 @@
           <el-button type="success" @click="handleStart(scope.row.id)"
             >Start</el-button
           >
-          <el-button type="danger" @click="handleDelete(scope.row.id)"
+          <el-button type="danger" @click="handleStop(scope.row.id)"
             >Stop</el-button
           >
           <el-button type="primary" @click="handleEdit(scope.row.id)"
@@ -108,7 +108,9 @@
     <el-table-column label="Start Time">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <span style="margin-left: 10px">{{ scope.row.time_start }}</span>
+          <span style="margin-left: 10px">{{
+            moment.utc(scope.row.timeStart).format("YYYY-MM-DD HH:mm:ss")
+          }}</span>
         </div>
       </template>
     </el-table-column>
@@ -116,7 +118,9 @@
     <el-table-column label="End Time">
       <template #default="scope">
         <div style="display: flex; align-items: center">
-          <span style="margin-left: 10px">{{ scope.row.time_end }}</span>
+          <span style="margin-left: 10px">{{
+            moment.utc(scope.row.timeEnd).format("YYYY-MM-DD h:mm:ss")
+          }}</span>
         </div>
       </template>
     </el-table-column>
@@ -139,7 +143,7 @@
             label=""
             size="large"
             border
-            @change="handleCheckbox(scope.row.id)"
+            @change="handleCheckbox(scope.row.id, scope.row.checkPressure)"
           />
         </div>
       </template>
@@ -152,6 +156,7 @@ import { ref, onMounted, inject } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 const axios: any = inject("axios"); // inject axios
 const router = useRouter();
+import moment from "moment";
 
 interface festo {
   formulaName: string;
@@ -160,6 +165,7 @@ interface festo {
   id: number;
   name: string;
   slaveId: number;
+  scheduleId: number;
 }
 
 interface festoDetail {
@@ -170,8 +176,8 @@ interface festoDetail {
   sequence: number;
   status: number;
   checkPressure: boolean;
-  time_end: Date;
-  time_start: Date;
+  timeEnd: Date;
+  timeStart: Date;
 }
 
 interface formula {
@@ -189,13 +195,13 @@ let selectedId = ref<{}>({});
 
 const handleStart = (id: number) => {
   axios
-    .patch("/festo/status/" + id, { option: "start" })
+    .patch("/festo/" + id, { option: "start" })
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") {
+      if (response.data.msg == "Success") {
         getFestoSchedule(id);
         return;
-      } else alert(response.data.Msg);
+      } else alert(response.data.msg);
     })
     .catch(function (error: { data: any }) {
       // handle error
@@ -206,15 +212,15 @@ const handleStart = (id: number) => {
     });
 };
 
-const handleDelete = (id: number) => {
+const handleStop = (id: number) => {
   axios
-    .patch("/festo/status/" + id, { option: "stop" })
+    .patch("/festo/" + id, { option: "stop" })
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") {
+      if (response.data.msg == "Success") {
         getFestoSchedule(id);
         return;
-      } else alert(response.data.Msg);
+      } else alert(response.data.msg);
     })
     .catch(function (error: { data: any }) {
       // handle error
@@ -230,18 +236,25 @@ const handleEdit = (id: number) => {
 };
 
 const handleCurrentChange = (festo: festo) => {
+  if (!festo.scheduleId) {
+    festoSchedule.value = [];
+    return;
+  }
+  selectedId.value = {
+    name: "festoEditSchedule",
+    params: { id: festo.scheduleId },
+  };
   getFestoSchedule(festo.id);
 };
 
 const getFestoSchedule = (id: number) => {
-  selectedId.value = { name: "festoEditSchedule", params: { id: id } };
   axios
-    .get("/festo/schedule/" + id)
+    .get("/festo/" + id)
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success")
-        festoSchedule.value = response.data.Data;
-      else alert(response.data.Msg);
+      if (response.data.msg == "Success")
+        festoSchedule.value = response.data.data.schedules;
+      else alert(response.data.msg);
     })
     .catch(function (error: {}) {
       // handle error
@@ -257,7 +270,7 @@ const getFestoList = () => {
     .get("/festo")
     .then(function (response: { data: any }) {
       // handle success
-      festoData.value = response.data.Data;
+      festoData.value = response.data.data;
     })
     .catch(function (error: { data: any }) {
       // handle error
@@ -273,7 +286,7 @@ const getFormula = () => {
     .get("/formula")
     .then(function (response: { data: any }) {
       // handle success
-      formulaData.value = response.data.Data;
+      formulaData.value = response.data.data;
     })
     .catch(function (error: {}) {
       // handle error
@@ -300,13 +313,13 @@ const handleTag = (status: number) => {
   return type;
 };
 
-const handleCheckbox = (id: number) => {
+const handleCheckbox = (id: number, checkPressure: boolean) => {
   axios
-    .patch("/schedule/checkPressure/" + id)
+    .patch("/schedule/detail/" + id, { checkPressure: checkPressure })
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") return;
-      else alert(response.data.Msg);
+      if (response.data.msg == "Success") return;
+      else alert(response.data.msg);
     })
     .catch(function (error: {}) {
       // handle error

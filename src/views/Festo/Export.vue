@@ -210,11 +210,11 @@ const handleSearch = async () => {
     })
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") {
-        historyList.value = response.data.Data;
+      if (response.data.msg == "Success") {
+        historyList.value = response.data.data;
 
         return;
-      } else alert(response.data.Msg);
+      } else alert(response.data.msg);
     })
     .catch(function (error: {}) {
       // handle error
@@ -293,17 +293,17 @@ const selectDate = async () => {
     .get(`/festo/history/batch?startTime=${start}&endTime=${end}`)
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") {
-        if (response.data.Data.length == 0)
+      if (response.data.msg == "Success") {
+        if (response.data.data.length == 0)
           ElMessage({
             message: "No Batch Number",
             type: "warning",
           });
-        batchList.value = response.data.Data;
+        batchList.value = response.data.data;
         batchNumber.value = "";
 
         return;
-      } else alert(response.data.Msg);
+      } else alert(response.data.msg);
     })
     .catch(function (error: {}) {
       // handle error

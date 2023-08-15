@@ -59,9 +59,9 @@ const handleEdit = (id: number) => {
         .patch("/festo/status/" + id, { option: "start" })
         .then(function (response: { data: any }) {
             // handle success
-            if (response.data.Msg == "Success") {
+            if (response.data.msg == "Success") {
                 return;
-            } else alert(response.data.Msg);
+            } else alert(response.data.msg);
         })
         .catch(function (error: { data: any }) {
             // handle error
@@ -77,9 +77,9 @@ const handleDelete = (id: number) => {
         .patch("/festo/status/" + id, { option: "stop" })
         .then(function (response: { data: any }) {
             // handle success
-            if (response.data.Msg == "Success") {
+            if (response.data.msg == "Success") {
                 return;
-            } else alert(response.data.Msg);
+            } else alert(response.data.msg);
         })
         .catch(function (error: { data: any }) {
             // handle error

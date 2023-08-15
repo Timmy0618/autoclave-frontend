@@ -11,8 +11,8 @@
         class-name="my-content"
         width="150px"
       >
-        <template v-if="festoData.length">
-          {{ festoData[0].name }}
+        <template v-if="festoData">
+          {{ festoData.name }}
         </template>
       </el-descriptions-item>
 
@@ -26,8 +26,8 @@
       >
         <el-dropdown @command="handleDropdown">
           <span class="el-dropdown-link">
-            <template v-if="festoData.length">
-              {{ festoData[0].formulaName }}
+            <template v-if="festoData">
+              {{ festoData.formulaName }}
             </template>
             <el-icon class="el-icon--right">
               <arrow-down />
@@ -108,7 +108,7 @@ interface formula {
   update_time: Date;
 }
 
-let festoData = ref<Array<festo>>([]);
+let festoData = ref<festo>({});
 let formulaData = ref<Array<formula>>([]);
 let batchNumber = ref("");
 let warningTime = ref(0);
@@ -119,10 +119,10 @@ const getFesto = (id: number) => {
     .get("/festo/" + id)
     .then(function (response: { data: any }) {
       // handle success
-      festoData.value = response.data.Data;
-      formulaId = festoData.value[0].formulaId;
-      batchNumber.value = festoData.value[0].batchNumber;
-      warningTime.value = festoData.value[0].warningTime;
+      festoData.value = response.data.data;
+      formulaId = festoData?.value?.formulaId;
+      batchNumber.value = festoData?.value?.batchNumber;
+      warningTime.value = festoData?.value?.warningTime;
     })
     .catch(function (error: { data: any }) {
       // handle error
@@ -138,7 +138,7 @@ const getFormula = () => {
     .get("/formula")
     .then(function (response: { data: any }) {
       // handle success
-      formulaData.value = response.data.Data;
+      formulaData.value = response.data.data;
     })
     .catch(function (error: {}) {
       // handle error
@@ -159,8 +159,8 @@ const handleComplete = () => {
     })
     .then(function (response: { data: any }) {
       // handle success
-      if (response.data.Msg == "Success") router.back();
-      else alert(response.data.Msg);
+      if (response.data.msg == "Success") router.back();
+      else alert(response.data.msg);
     })
     .catch(function (error: {}) {
       // handle error
@@ -176,7 +176,7 @@ const handleDropdown = async (obj: {
   formulaName: string;
 }) => {
   formulaId = obj.formulaId;
-  festoData.value[0].formulaName = obj.formulaName;
+  festoData.value.formulaName = obj.formulaName;
 };
 
 watch(

@@ -103,8 +103,8 @@ const handleComplete = () => {
         .post("/formula", postData)
         .then(function (response: { data: any }) {
             // handle success
-            if (response.data.Msg == "Success") router.go(-1);
-            else alert(response.data.Msg);
+            if (response.data.msg == "Success") router.go(-1);
+            else alert(response.data.msg);
         })
         .catch(function (error: {}) {
             // handle error

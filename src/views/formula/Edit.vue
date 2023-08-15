@@ -69,8 +69,8 @@ const getFormulaDetail = () => {
         .get("/formula/" + id)
         .then(function (response: { data: any }) {
             // handle success
-            formulaDetail.value = response.data.Data;
-            formulaName.value = response.data.Data[0].name
+            formulaDetail.value = response.data.data;
+            formulaName.value = response.data.data[0].name
         })
         .catch(function (error: {}) {
             // handle error
@@ -91,9 +91,9 @@ const handleComplete = () => {
         .then(function (response: { data: any }) {
             // handle success
             router.back()
-            // if (response.data.Msg == "Success")
+            // if (response.data.msg == "Success")
             //     window.location = baseurl + "/html/festo/festo.html";
-            // else alert(response.data.Msg);
+            // else alert(response.data.msg);
         })
         .catch(function (error: {}) {
             // handle error

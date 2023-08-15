@@ -8,7 +8,7 @@ import VueAxios from 'vue-axios'
 import { logout } from "./common/common";
 
 // Set base URL
-axios.defaults.baseURL = "http://127.0.0.1:5000";
+axios.defaults.baseURL = "http://127.0.0.1:5002";
 // Set 401
 axios.interceptors.response.use(function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
