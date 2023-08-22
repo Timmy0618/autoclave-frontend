@@ -32,7 +32,7 @@
                 <template #default="scope">
                     <div style="display: flex; align-items: center">
                         <!-- <span style="margin-left: 10px">{{ scope.row.processTime }}</span> -->
-                        <el-input v-model="scope.row.process_time" placeholder="Please input" type="number">
+                        <el-input v-model="scope.row.processTime" placeholder="Please input" type="number">
                             <template #append>min</template>
                         </el-input>
                     </div>
@@ -55,7 +55,7 @@ const axios: any = inject('axios')  // inject axios
 interface formulaDetailI {
     name: string;
     pressure: number;
-    process_time: number;
+    processTime: number;
     sequence: number;
 }
 
@@ -69,8 +69,8 @@ const getFormulaDetail = () => {
         .get("/formula/" + id)
         .then(function (response: { data: any }) {
             // handle success
-            formulaDetail.value = response.data.data;
-            formulaName.value = response.data.data[0].name
+            formulaDetail.value = response.data.data.details;
+            formulaName.value = response.data.data.name
         })
         .catch(function (error: {}) {
             // handle error

@@ -150,7 +150,6 @@ const getFormula = () => {
 };
 
 const handleComplete = () => {
-  console.log(formulaId, batchNumber.value);
   axios
     .patch("/festo/" + id, {
       formulaId: formulaId,
