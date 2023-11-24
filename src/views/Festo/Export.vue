@@ -83,11 +83,11 @@
             {{ index }}
           </span>
           <Chart
-            :size="{ width: 1080, height: 420 }"
+            :size="{ width: 1080, height: 720 }"
             :data="data"
             :margin="margin"
             :direction="direction"
-            :axis="axis"
+            :axis="{ y: { min: 0, max: 150 } }"
           >
             <template #layers>
               <Grid strokeDasharray="2,2" />
@@ -95,7 +95,6 @@
                 :dataKeys="['time', 'avgPressure']"
                 :lineStyle="{ stroke: 'red' }"
               />
-              <!-- <LabelsLayer :dataKeys="['time', 'avgPressure']" /> -->
             </template>
 
             <template #widgets>
@@ -202,7 +201,7 @@ const handleSearch = async () => {
   end = `${end.getFullYear()}-${end.getMonth() + 1}-${end.getDate()} 23:59:59`;
 
   axios
-    .post("/festo/history", {
+    .post("/history", {
       batchNumber: batchNumber.value,
       startTime: start,
       endTime: end,
@@ -240,7 +239,7 @@ const handleExport = async () => {
   exportDisabled.value = true;
   axios
     .post(
-      "/festo/export",
+      "/history/export",
       {
         batchNumber: batchNumber.value,
         startTime: start,
@@ -290,7 +289,7 @@ const selectDate = async () => {
   end = moment(end).format("YYYY-MM-DD 23:59:59");
 
   axios
-    .get(`/festo/history/batch?startTime=${start}&endTime=${end}`)
+    .get(`/history/batch?startTime=${start}&endTime=${end}`)
     .then(function (response: { data: any }) {
       // handle success
       if (response.data.msg == "Success") {

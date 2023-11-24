@@ -23,7 +23,7 @@
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <span style="margin-left: 10px">
-            {{ moment.utc(scope.row.createTime).format("YYYY-MM-DD h:mm:ss") }}
+            {{ moment.utc(scope.row.createTime).format("YYYY-MM-DD HH:mm:ss") }}
           </span>
         </div>
       </template>
@@ -33,7 +33,7 @@
       <template #default="scope">
         <div style="display: flex; align-items: center">
           <span style="margin-left: 10px">{{
-            moment.utc(scope.row.updateTime).format("YYYY-MM-DD h:mm:ss")
+            moment.utc(scope.row.updateTime).format("YYYY-MM-DD HH:mm:ss")
           }}</span>
         </div>
       </template>

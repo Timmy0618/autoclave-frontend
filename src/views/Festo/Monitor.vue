@@ -7,7 +7,7 @@
     <el-col v-for="(monitorData, index) in monitorList" :span="5" :offset="1">
       <el-card style="margin-bottom: 20px">
         <el-descriptions
-          :title="monitorData.name"
+          :title="monitorData.festoName"
           :column="1"
           border
           size="large"
@@ -25,13 +25,13 @@
             label="Sequence"
             label-align="left"
             align="center"
-            >{{ monitorData.sequence + 1 }}
+            >{{ monitorData.scheduleSequence + 1 }}
           </el-descriptions-item>
           <el-descriptions-item
             label="Dst Pressure"
             label-align="left"
             align="center"
-            >{{ monitorData.dstPressure }} kpa
+            >{{ monitorData.schedulePressure }} kpa
           </el-descriptions-item>
           <el-descriptions-item
             label="Now Pressure"
@@ -46,7 +46,7 @@
             align="center"
           >
             <el-tag class="mx-1" size="large" :type="warningTag[monitorData.id]"
-              >{{ monitorData.warningTime }} min</el-tag
+              >{{ Math.floor(monitorData.warningTime / 60) }} min</el-tag
             >
           </el-descriptions-item>
           <el-descriptions-item
@@ -54,8 +54,8 @@
             label-align="left"
             align="center"
           >
-            <el-tag size="large" :type="handleTag(monitorData.status)"
-              >{{ statusMap[monitorData.status] }}
+            <el-tag size="large" :type="handleTag(monitorData.scheduleStatus)"
+              >{{ statusMap[monitorData.scheduleStatus] }}
             </el-tag>
           </el-descriptions-item>
         </el-descriptions>
@@ -74,14 +74,14 @@ let checkPage = true;
 interface monitor {
   checkPressure: boolean;
   currentPressure: number;
-  dstPressure: number;
+  schedulePressure: number;
   formulaName: string;
   id: number;
-  name: string;
-  sequence: number;
+  festoName: string;
+  scheduleSequence: number;
   warningTime: number;
   warningTimeLimit: number;
-  status: number;
+  scheduleStatus: number;
 }
 
 let monitorList = ref<Array<monitor>>([]);
@@ -134,7 +134,7 @@ const handleTag = (status: number) => {
 
 const getMonitorData = async () => {
   axios
-    .get("/festo/monitor")
+    .get("/festo/executing")
     .then(function (response: { data: any }) {
       // handle success
       if (response.data.msg == "Success") {
@@ -173,7 +173,7 @@ watch(
     monitorList.value.forEach((element) => {
       if (
         element.checkPressure &&
-        element.status != 2 &&
+        element.scheduleStatus != 2 &&
         element.warningTime >= element.warningTimeLimit
       ) {
         warningTag.value[element.id] = "danger";
