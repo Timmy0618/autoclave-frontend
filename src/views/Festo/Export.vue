@@ -1,6 +1,6 @@
 <template>
-  <el-row style="margin-bottom: 20px" :gutter="20" justify="start">
-    <el-col :span="7">
+  <el-row class="search-row" :gutter="20" justify="start">
+    <el-col :xs="24" :sm="12" :md="8" :lg="6">
       <div class="block">
         <span class="demonstration">Date：　</span>
         <el-date-picker
@@ -17,7 +17,7 @@
       </div>
     </el-col>
 
-    <el-col :span="1">
+    <el-col :xs="24" :sm="12" :md="4" :lg="2">
       <!-- <el-dropdown split-button type="primary" @command="handleType">
         Default
       </el-dropdown> -->
@@ -40,7 +40,7 @@
       </el-dropdown>
     </el-col>
 
-    <el-col :span="1">
+    <el-col :xs="24" :sm="12" :md="4" :lg="2">
       <!-- <el-dropdown split-button type="primary" @command="handleType">
         Default
       </el-dropdown> -->
@@ -60,11 +60,11 @@
       </el-dropdown>
     </el-col>
 
-    <el-col :span="1">
+    <el-col :xs="24" :sm="12" :md="4" :lg="2">
       <el-button :icon="Search" circle @click="handleSearch"></el-button>
     </el-col>
 
-    <el-col :span="1">
+    <el-col :xs="24" :sm="12" :md="4" :lg="2">
       <el-button
         type="primary"
         plan
