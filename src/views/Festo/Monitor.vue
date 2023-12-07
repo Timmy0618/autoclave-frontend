@@ -46,7 +46,7 @@
             align="center"
           >
             <el-tag class="mx-1" size="large" :type="warningTag[monitorData.id]"
-              >{{ Math.floor(monitorData.warningTime / 60) }} min</el-tag
+              >{{ monitorData.warningTime }} min</el-tag
             >
           </el-descriptions-item>
           <el-descriptions-item

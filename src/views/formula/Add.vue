@@ -67,7 +67,7 @@ import { ref, onMounted, inject, watch } from "vue";
 import { ElMessage } from "element-plus";
 const router = useRouter();
 const axios: any = inject("axios"); // inject axios
-
+const formulaLimit = 20;
 interface postData {
   name: string;
   detail: detail[];
@@ -134,8 +134,8 @@ watch(
 );
 
 watch(formulaCount, (curVal, oldVal) => {
-  if (curVal > 10) {
-    formulaCount.value = 10;
+  if (curVal > formulaLimit) {
+    formulaCount.value = formulaLimit;
     return;
   }
   if (curVal < 0) {
