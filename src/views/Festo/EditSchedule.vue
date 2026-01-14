@@ -62,7 +62,6 @@
                 <div class="input-container">
                   <el-input-number
                     v-model="scope.row.pressure"
-                    :min="0"
                     :max="10000"
                     :precision="1"
                     controls-position="right"

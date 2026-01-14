@@ -141,7 +141,6 @@
                 <div class="input-container">
                   <el-input-number
                     v-model="scope.row.pressure"
-                    :min="0"
                     :max="10000"
                     :precision="1"
                     controls-position="right"
@@ -283,13 +282,13 @@ const handleComplete = async () => {
     return;
   }
 
-  // 檢查是否有未填寫的資料 - 允許0值
+  // 檢查是否有未填寫的資料 - 允許0值和負值
   const hasIncompleteStep = formulaDetail.value.some(step =>
-    step.pressure < 0 || step.processTime < 0
+    step.processTime < 0
   );
 
   if (hasIncompleteStep) {
-    ElMessage.error("壓力值和處理時間不能為負數");
+    ElMessage.error("處理時間不能為負數");
     return;
   }
 
@@ -312,8 +311,10 @@ const handleComplete = async () => {
 };
 
 const getStepStatus = (row: FormulaDetailI) => {
-  // 只要有設定過值（包括0），就視為已設定
-  if (row.pressure >= 0 && row.processTime >= 0) {
+  // 只要有設定過值（包括負數），就視為已設定
+  if (row.pressure !== undefined && row.pressure !== null &&
+      row.processTime !== undefined && row.processTime !== null &&
+      row.processTime >= 0) {
     return "success";
   } else {
     return "danger";
@@ -321,7 +322,9 @@ const getStepStatus = (row: FormulaDetailI) => {
 };
 
 const getStepStatusText = (row: FormulaDetailI) => {
-  if (row.pressure >= 0 && row.processTime >= 0) {
+  if (row.pressure !== undefined && row.pressure !== null &&
+      row.processTime !== undefined && row.processTime !== null &&
+      row.processTime >= 0) {
     return "已設定";
   } else {
     return "未設定";
