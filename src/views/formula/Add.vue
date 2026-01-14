@@ -462,7 +462,7 @@ onMounted(() => {});
 }
 
 .stats-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   border-radius: 12px;
   padding: 20px;
   height: 100%;

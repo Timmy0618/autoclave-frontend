@@ -291,7 +291,7 @@ onMounted(() => {
 <style scoped>
 .formula-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   padding: 20px;
 }
 
@@ -334,7 +334,7 @@ onMounted(() => {
 }
 
 .header-actions .add-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #409eff 0%, #337ecc 100%);
   border: none;
   color: white;
   font-weight: 500;
