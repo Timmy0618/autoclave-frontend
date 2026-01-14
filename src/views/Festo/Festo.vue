@@ -150,7 +150,7 @@
             <el-icon class="card-icon">
               <Calendar />
             </el-icon>
-            <span class="card-title">Festo 排程資訊</span>
+            <span class="card-title">{{ selectedDeviceName ? `${selectedDeviceName} 排程資訊` : 'Festo 排程資訊' }}</span>
             <el-tag v-if="festoSchedule.length" type="success" size="small" class="schedule-tag">
               {{ festoSchedule.length }} 個步驟
             </el-tag>
@@ -318,6 +318,7 @@ const festoData = ref<festo[]>([]);
 const festoSchedule = ref<festoDetail[]>([]);
 const formulaData = ref<formula[]>([]);
 const selectedId = ref({});
+const selectedDeviceName = ref("");
 const loading = ref(false);
 const scheduleLoading = ref(false);
 const actionLoading = ref<Record<number, boolean>>({});
@@ -383,6 +384,7 @@ const handleEdit = (id: number) => {
 };
 
 const handleCurrentChange = (festo: festo) => {
+  selectedDeviceName.value = festo.name;
   if (!festo.scheduleId) {
     festoSchedule.value = [];
     return;

@@ -127,10 +127,7 @@
             <el-icon class="card-icon">
               <Setting />
             </el-icon>
-            <span class="card-title">配方詳細資訊</span>
-            <el-tag type="success" size="small" class="detail-tag">
-              {{ formulaDetail.name }}
-            </el-tag>
+            <span class="card-title">{{ formulaDetail ? `${formulaDetail.name} 詳細資訊` : '配方詳細資訊' }}</span>
           </div>
         </template>
 
@@ -395,8 +392,7 @@ onMounted(() => {
   color: #2c3e50;
 }
 
-.count-tag,
-.detail-tag {
+.count-tag {
   margin-left: auto;
 }
 
