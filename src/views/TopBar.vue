@@ -42,16 +42,15 @@
       <div class="menu-spacer"></div>
 
       <!-- Logout Button -->
-      <el-button
+      <el-menu-item
         v-if="isLogin != null"
-        type="danger"
-        size="small"
-        class="logout-btn"
+        index=""
+        class="auth-item logout-item"
         @click="handleLogout"
       >
         <el-icon><SwitchButton /></el-icon>
-        <span>Logout</span>
-      </el-button>
+        <span>登出</span>
+      </el-menu-item>
 
       <!-- Login Button -->
       <el-menu-item
@@ -78,8 +77,7 @@ import {
   View,
   DocumentCopy,
   Download,
-  SwitchButton,
-  User
+  SwitchButton
 } from "@element-plus/icons-vue";
 
 const { cookies } = useCookies()
@@ -195,6 +193,40 @@ watch(route, (curVal, oldVal) => {
   box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
+.user-dropdown {
+  margin: 0 4px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #ecf0f1;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.user-info:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-icon {
+  color: #3498db;
+}
+
+.arrow-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.user-dropdown:hover .arrow-icon {
+  transform: rotate(180deg);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .topbar-menu {
@@ -218,6 +250,10 @@ watch(route, (curVal, oldVal) => {
   }
 
   .logout-btn span {
+    display: none;
+  }
+
+  .user-name {
     display: none;
   }
 }
